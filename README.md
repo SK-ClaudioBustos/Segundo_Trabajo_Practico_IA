@@ -11,23 +11,23 @@ Repositorio del chat-bot necesario para realizar el TP 2 de IA
 2. Crear un entorno virtual con python 3.10
 
    ```bash
-       py -3.10 -m venv .venv
+      py -3.10 -m venv venv
    ```
 
 3. Activar el entorno virtual
 
    ```bash
-       .venv\Scripts\Activate.ps1
+      .venv\Scripts\Activate.ps1
    ```
 
 4. Navegar hasta dentro de la carpeta rasa
 
    ```bash
-   cd ./rasa
+      cd ./rasa
    ```
 
 5. Usar rasa mediante terminal
 
    ```bash
-   rasa train
+      rasa train
    ```
