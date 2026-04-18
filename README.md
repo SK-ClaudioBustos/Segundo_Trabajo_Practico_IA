@@ -14,10 +14,10 @@ Repositorio del chat-bot necesario para realizar el TP 2 de IA
       py -3.10 -m venv venv
    ```
 
-3. Activar el entorno virtual
+3. Activar el entorno virtual cada vez que se use la terminal
 
    ```bash
-      .venv\Scripts\Activate.ps1
+      .\venv\Scripts\Activate.ps1
    ```
 
 4. Navegar hasta dentro de la carpeta rasa
