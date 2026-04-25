@@ -26,8 +26,22 @@ Repositorio del chat-bot necesario para realizar el TP 2 de IA
       cd ./rasa
    ```
 
-5. Usar rasa mediante terminal
+5. Entrenamos el modelo, esto solo es necesario si se realizaron cambios en el modelo
 
    ```bash
       rasa train
+   ```
+
+6. Ejecutamos dos comandos, uno en cada terminal
+
+   Terminal 1
+
+   ```bash
+      ..\venv\Scripts\python.exe -m rasa run actions
+   ```
+
+   Terminal 2
+
+   ```bash
+      ..\venv\Scripts\python.exe -m rasa shell
    ```
