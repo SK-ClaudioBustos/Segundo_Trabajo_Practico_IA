@@ -1,33 +1,109 @@
 version: "3.1"
 
 intents:
-  - greet
-  - goodbye
-  - affirm
-  - deny
-  - mood_great
-  - mood_unhappy
+  - saludar
+  - despedir
+  - consultar_pokemon
+  - consultar_tipo
+  - consultar_habilidad
+  - consultar_peso
+  - consultar_altura
+  - consultar_estadistica
+  - consultar_dato_pokemon
+  - consultar_generacion
+  - consultar_otro_pokemon
+  - afirmar
+  - negar
+  - chit_chat
   - bot_challenge
+  - agradecer
+  - insultar
+
+entities:
+  - nombre_pokemon
+  - tipo_pokemon
+  - numero_generacion
+
+slots:
+  nombre_pokemon:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: nombre_pokemon
+
+  tipo_pokemon:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: tipo_pokemon
+
+  numero_generacion:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: numero_generacion
+
+  ultima_consulta:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+  advertencias:
+    type: float
+    initial_value: 0
+    influence_conversation: true
+    mappings:
+      - type: custom
 
 responses:
-  utter_greet:
-  - text: "Hey! How are you?"
+  utter_saludar:
+    - text: "Hola! Soy tu asistente Pokemon. Sobre que Pokemon queres saber?"
+    - text: "Buenas! Soy un bot Pokemon. Preguntame lo que quieras sobre cualquier Pokemon."
+    - text: "Hola, entrenador! En que Pokemon estas interesado?"
 
-  utter_cheer_up:
-  - text: "Here is something to cheer you up:"
-    image: "https://i.imgur.com/nGF1K8f.jpg"
+  utter_despedir:
+    - text: "Hasta luego, entrenador!"
+    - text: "Nos vemos! Que atrapes muchos Pokemon."
+    - text: "Chau! Volve cuando quieras saber mas sobre Pokemon."
 
-  utter_did_that_help:
-  - text: "Did that help you?"
+  utter_soy_bot:
+    - text: "Soy un bot Pokemon creado con Rasa. Preguntame sobre cualquier Pokemon!"
 
-  utter_happy:
-  - text: "Great, carry on!"
+  utter_chit_chat:
+    - text: "[ADVERTENCIA] Eso no tiene que ver con Pokemon. Este chat es exclusivamente para consultas sobre Pokemon. Por favor, mantene el tema o la conversacion sera finalizada."
+    - text: "[ADVERTENCIA] Eso se escapa de mi conocimiento. Solo respondo consultas sobre Pokemon. Si seguis con preguntas fuera de tema, voy a tener que cortar la conversacion."
+    - text: "[ADVERTENCIA] No puedo ayudarte con eso. Este es un asistente Pokemon. Por favor, hace preguntas relacionadas o la sesion se cerrara."
 
-  utter_goodbye:
-  - text: "Bye"
+  utter_agradecer:
+    - text: "De nada! Queres saber algo mas sobre Pokemon?"
+    - text: "No hay de que! Preguntame lo que necesites."
 
-  utter_iamabot:
-  - text: "I am a bot, powered by Rasa."
+  utter_preguntar_pokemon:
+    - text: "Sobre que Pokemon te gustaria saber?"
+    - text: "Decime el nombre de un Pokemon y te cuento todo sobre el."
+
+  utter_no_entiendo:
+    - text: "No entendi tu mensaje. Podes preguntarme sobre cualquier Pokemon. Por ejemplo: 'Que tipo es Pikachu?' o 'Contame sobre Charizard'"
+    - text: "No estoy seguro de que me estas pidiendo. Proba preguntarme algo como: 'Que habilidades tiene Bulbasaur?' o 'Pokemon de la tercera generacion'"
+
+  utter_default:
+    - text: "No estoy seguro de que me estas pidiendo. Queres consultar sobre algun Pokemon?"
+
+actions:
+  - action_consultar_pokemon
+  - action_consultar_tipo
+  - action_consultar_habilidad
+  - action_consultar_peso
+  - action_consultar_altura
+  - action_consultar_estadistica
+  - action_consultar_dato_pokemon
+  - action_consultar_generacion
+  - action_consultar_otro_pokemon
+  - action_manejar_conducta
 
 session_config:
   session_expiration_time: 60

@@ -1,91 +1,51 @@
-#### This file contains tests to evaluate that your bot behaves as expected.
-#### If you want to learn more, please see the docs: https://rasa.com/docs/rasa/testing-your-assistant
+version: "3.1"
 
 stories:
-- story: happy path 1
-  steps:
-  - user: |
-      hello there!
-    intent: greet
-  - action: utter_greet
-  - user: |
-      amazing
-    intent: mood_great
-  - action: utter_happy
 
-- story: happy path 2
+- story: test consulta pokemon feliz
   steps:
   - user: |
-      hello there!
-    intent: greet
-  - action: utter_greet
+      hola
+    intent: saludar
+  - action: utter_saludar
   - user: |
-      amazing
-    intent: mood_great
-  - action: utter_happy
+      contame sobre pikachu
+    intent: consultar_pokemon
+  - action: action_consultar_pokemon
   - user: |
-      bye-bye!
-    intent: goodbye
-  - action: utter_goodbye
+      gracias
+    intent: agradecer
+  - action: utter_agradecer
+  - user: |
+      chau
+    intent: despedir
+  - action: utter_despedir
 
-- story: sad path 1
+- story: test chit chat redireccion
   steps:
   - user: |
-      hello
-    intent: greet
-  - action: utter_greet
+      hola
+    intent: saludar
+  - action: utter_saludar
   - user: |
-      not good
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
+      qué clima hace hoy
+    intent: chit_chat
+  - action: action_manejar_conducta
   - user: |
-      yes
-    intent: affirm
-  - action: utter_happy
+      contame sobre charizard
+    intent: consultar_pokemon
+  - action: action_consultar_pokemon
 
-- story: sad path 2
+- story: test consulta tipo
   steps:
   - user: |
-      hello
-    intent: greet
-  - action: utter_greet
-  - user: |
-      not good
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      not really
-    intent: deny
-  - action: utter_goodbye
+      qué pokémon son de tipo fuego
+    intent: consultar_tipo
+  - action: action_consultar_tipo
 
-- story: sad path 3
+- story: test bot challenge
   steps:
   - user: |
-      hi
-    intent: greet
-  - action: utter_greet
-  - user: |
-      very terrible
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      no
-    intent: deny
-  - action: utter_goodbye
-
-- story: say goodbye
-  steps:
-  - user: |
-      bye-bye!
-    intent: goodbye
-  - action: utter_goodbye
-
-- story: bot challenge
-  steps:
-  - user: |
-      are you a bot?
+      sos un robot
     intent: bot_challenge
-  - action: utter_iamabot
+  - action: utter_soy_bot

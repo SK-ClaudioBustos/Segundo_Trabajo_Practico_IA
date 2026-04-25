@@ -1,91 +1,386 @@
 version: "3.1"
 
 nlu:
-- intent: greet
+- intent: saludar
   examples: |
+    - hola
+    - buenas
+    - qué tal
+    - buen día
+    - buenos días
+    - buenas tardes
+    - buenas noches
     - hey
-    - hello
-    - hi
-    - hello there
-    - good morning
-    - good evening
-    - moin
-    - hey there
-    - let's go
-    - hey dude
-    - goodmorning
-    - goodevening
-    - good afternoon
+    - hola qué tal
+    - hola buenas
+    - qué onda
+    - cómo andás
+    - hola bot
+    - buenas buenas
+    - holaa
 
-- intent: goodbye
+- intent: despedir
   examples: |
-    - cu
-    - good by
-    - cee you later
-    - good night
+    - chau
+    - hasta luego
+    - nos vemos
+    - adiós
     - bye
-    - goodbye
-    - have a nice day
-    - see you around
-    - bye bye
-    - see you later
+    - hasta pronto
+    - me voy
+    - nos vemos luego
+    - chau chau
+    - hasta la próxima
+    - me retiro
+    - bueno me voy
+    - ya me voy
+    - que te vaya bien
 
-- intent: affirm
+- intent: consultar_pokemon
   examples: |
-    - yes
-    - y
-    - indeed
-    - of course
-    - that sounds good
-    - correct
+    - contame sobre [pikachu](nombre_pokemon)
+    - qué sabés de [charizard](nombre_pokemon)
+    - dame info de [bulbasaur](nombre_pokemon)
+    - quiero saber sobre [mewtwo](nombre_pokemon)
+    - qué es [squirtle](nombre_pokemon)
+    - información de [jigglypuff](nombre_pokemon)
+    - datos de [eevee](nombre_pokemon)
+    - quién es [gengar](nombre_pokemon)
+    - decime sobre [snorlax](nombre_pokemon)
+    - qué podés decirme de [lucario](nombre_pokemon)
+    - hablame de [garchomp](nombre_pokemon)
+    - qué información tenés de [dragonite](nombre_pokemon)
+    - buscar [mew](nombre_pokemon)
+    - mostrame a [tyranitar](nombre_pokemon)
+    - conocés a [blaziken](nombre_pokemon)
+    - contame de [gyarados](nombre_pokemon)
+    - qué onda con [alakazam](nombre_pokemon)
+    - sabés algo de [machamp](nombre_pokemon)
+    - quiero info sobre [umbreon](nombre_pokemon)
+    - qué me podés decir de [arcanine](nombre_pokemon)
 
-- intent: deny
+- intent: consultar_tipo
+  examples: |
+    - qué pokémon son de tipo [fuego](tipo_pokemon)
+    - pokémon de tipo [agua](tipo_pokemon)
+    - decime pokémon de tipo [planta](tipo_pokemon)
+    - cuáles son los pokémon de tipo [eléctrico](tipo_pokemon)
+    - quiero ver pokémon de tipo [psíquico](tipo_pokemon)
+    - pokémon tipo [fantasma](tipo_pokemon)
+    - qué pokémon hay de tipo [dragón](tipo_pokemon)
+    - mostrá pokémon de tipo [hielo](tipo_pokemon)
+    - hay pokémon de tipo [hada](tipo_pokemon)
+    - pokémon de tipo [lucha](tipo_pokemon)
+    - cuáles pokémon son de tipo [veneno](tipo_pokemon)
+    - listá los pokémon tipo [tierra](tipo_pokemon)
+    - pokémon de tipo [roca](tipo_pokemon)
+    - qué pokémon son tipo [volador](tipo_pokemon)
+    - dame pokémon de tipo [bicho](tipo_pokemon)
+    - pokémon tipo [acero](tipo_pokemon)
+    - cuáles son de tipo [siniestro](tipo_pokemon)
+    - pokémon de tipo [normal](tipo_pokemon)
+
+- intent: consultar_habilidad
+  examples: |
+    - qué habilidades tiene [pikachu](nombre_pokemon)
+    - cuáles son las habilidades de [charizard](nombre_pokemon)
+    - habilidades de [bulbasaur](nombre_pokemon)
+    - decime las habilidades de [mewtwo](nombre_pokemon)
+    - qué habilidades posee [eevee](nombre_pokemon)
+    - qué poderes tiene [gengar](nombre_pokemon)
+    - cuáles habilidades tiene [snorlax](nombre_pokemon)
+    - qué habilidades puede tener [lucario](nombre_pokemon)
+    - habilidad de [garchomp](nombre_pokemon)
+    - mostrá las habilidades de [dragonite](nombre_pokemon)
+    - cuáles son las skills de [blaziken](nombre_pokemon)
+    - qué habilidades conoce [alakazam](nombre_pokemon)
+    - las habilidades de [machamp](nombre_pokemon)
+    - dime las habilidades de [umbreon](nombre_pokemon)
+    - tiene habilidades [arcanine](nombre_pokemon)
+
+- intent: consultar_peso
+  examples: |
+    - cuánto pesa [pikachu](nombre_pokemon)
+    - cuánto pesa en kg
+    - peso de [charizard](nombre_pokemon)
+    - cuál es el peso de [bulbasaur](nombre_pokemon)
+    - cuánto pesa
+    - decime el peso
+    - y cuánto pesa
+    - pero cuánto pesa en kg
+    - cuánto pesa ese pokémon
+    - qué peso tiene [eevee](nombre_pokemon)
+    - cuántos kilos pesa [snorlax](nombre_pokemon)
+    - peso en kg de [mewtwo](nombre_pokemon)
+    - sabés cuánto pesa
+    - me decís cuánto pesa
+    - cuánto pesa exactamente
+    - y el peso
+    - decime el peso en kilos
+
+- intent: consultar_altura
+  examples: |
+    - cuánto mide [pikachu](nombre_pokemon)
+    - cuánto mide en metros
+    - altura de [charizard](nombre_pokemon)
+    - cuál es la altura de [bulbasaur](nombre_pokemon)
+    - cuánto mide
+    - decime la altura
+    - y cuánto mide
+    - qué altura tiene [eevee](nombre_pokemon)
+    - cuántos metros mide [snorlax](nombre_pokemon)
+    - altura en metros de [mewtwo](nombre_pokemon)
+    - sabés cuánto mide
+    - me decís cuánto mide
+    - cuánto mide exactamente
+    - y la altura
+    - qué tan alto es [gengar](nombre_pokemon)
+    - es alto [lucario](nombre_pokemon)
+    - qué tamaño tiene
+
+- intent: consultar_estadistica
+  examples: |
+    - cuánto ataque tiene [pikachu](nombre_pokemon)
+    - cuál es el ataque de [charizard](nombre_pokemon)
+    - cuánta defensa tiene [bulbasaur](nombre_pokemon)
+    - cuánto hp tiene [mewtwo](nombre_pokemon)
+    - cuánta vida tiene [eevee](nombre_pokemon)
+    - cuál es la velocidad de [gengar](nombre_pokemon)
+    - cuánto ataque especial tiene [lucario](nombre_pokemon)
+    - cuánta defensa especial tiene [snorlax](nombre_pokemon)
+    - decime el ataque
+    - cuánto ataque tiene
+    - y la defensa
+    - cuánta velocidad tiene
+    - decime la velocidad
+    - cuánto speed tiene
+    - estadísticas de [garchomp](nombre_pokemon)
+    - stats de [dragonite](nombre_pokemon)
+    - estadísticas base de [blaziken](nombre_pokemon)
+    - mostrá las estadísticas de [alakazam](nombre_pokemon)
+    - cuáles son las stats de [machamp](nombre_pokemon)
+    - cuáles son las estadísticas
+    - decime las stats
+    - y las estadísticas
+    - cuánto tiene de ataque
+    - cuánto tiene de defensa
+    - cuánto tiene de velocidad
+    - cuánto tiene de hp
+    - cuánta vida tiene
+    - cuánto tiene de ataque especial
+    - cuánto tiene de defensa especial
+
+- intent: consultar_dato_pokemon
+  examples: |
+    - de qué tipo es [pikachu](nombre_pokemon)
+    - qué tipo es [charizard](nombre_pokemon)
+    - de qué tipo es
+    - cuál es su tipo
+    - qué tipo tiene
+    - decime el tipo
+    - y el tipo
+    - cuál es el número de [bulbasaur](nombre_pokemon)
+    - qué número es en la pokédex
+    - cuál es su número
+    - número de pokédex de [mewtwo](nombre_pokemon)
+    - decime el id
+    - cuál es el id de [eevee](nombre_pokemon)
+    - decime un dato curioso de [pikachu](nombre_pokemon)
+    - contame algo interesante de [charizard](nombre_pokemon)
+    - algún dato curioso de [gengar](nombre_pokemon)
+    - sabías algo curioso de [lucario](nombre_pokemon)
+    - dato curioso
+    - contame algo curioso
+    - algún dato interesante
+
+- intent: consultar_generacion
+  examples: |
+    - pokémon de la [primera](numero_generacion) generación
+    - cuáles son los pokémon de la generación [1](numero_generacion)
+    - cuántos pokémon hay en la [primera](numero_generacion) generación
+    - cuántos pokémon agregaron en la [tercera](numero_generacion) generación
+    - cuántos pokémon nuevos hay en la [tercera](numero_generacion) generación
+    - cuántos pokémon tiene la generación [3](numero_generacion)
+    - mostrá los pokémon de la generación [2](numero_generacion)
+    - pokémon de la generación [segunda](numero_generacion)
+    - qué pokémon salieron en la [cuarta](numero_generacion) generación
+    - listame los pokémon de la gen [5](numero_generacion)
+    - qué pokémon hay en la generación [quinta](numero_generacion)
+    - pokémon de la gen [1](numero_generacion)
+    - generación [primera](numero_generacion)
+    - dame los pokémon de generación [sexta](numero_generacion)
+    - cuáles son de la [séptima](numero_generacion) generación
+    - pokémon de generación [octava](numero_generacion)
+    - qué pokémon nuevos tiene la gen [4](numero_generacion)
+    - cuántos pokémon hay en la gen [6](numero_generacion)
+    - listá pokémon de la generación [novena](numero_generacion)
+    - pokémon nuevos de la generación [7](numero_generacion)
+    - cuántos pokémon se agregaron en la generación [8](numero_generacion)
+    - decime los pokémon de la generación [9](numero_generacion)
+    - pokémon de la [segunda](numero_generacion) gen
+    - cuáles pokémon son de generación [tercera](numero_generacion)
+    - qué generaciones hay
+    - cuántas generaciones existen
+    - listame las generaciones
+    - generaciones de pokémon
+
+- intent: consultar_otro_pokemon
+  examples: |
+    - y [pikachu](nombre_pokemon)?
+    - y [charizard](nombre_pokemon)
+    - ahora [bulbasaur](nombre_pokemon)
+    - ahora decime de [mewtwo](nombre_pokemon)
+    - y de [squirtle](nombre_pokemon)?
+    - lo mismo de [eevee](nombre_pokemon)
+    - lo mismo pero de [gengar](nombre_pokemon)
+    - lo mismo para [snorlax](nombre_pokemon)
+    - y [lucario](nombre_pokemon) qué onda
+    - ahora con [garchomp](nombre_pokemon)
+    - y qué hay de [dragonite](nombre_pokemon)
+    - probá con [blaziken](nombre_pokemon)
+    - hacelo con [gyarados](nombre_pokemon)
+    - dame lo mismo de [alakazam](nombre_pokemon)
+    - ahora mostrá [machamp](nombre_pokemon)
+    - y [umbreon](nombre_pokemon) qué
+    - y si es [arcanine](nombre_pokemon)
+    - ahora para [tyranitar](nombre_pokemon)
+    - cambiá a [mew](nombre_pokemon)
+    - qué tal [jigglypuff](nombre_pokemon)
+
+- intent: afirmar
+  examples: |
+    - sí
+    - claro
+    - dale
+    - por supuesto
+    - sí quiero
+    - obvio
+    - claro que sí
+    - dale sí
+    - sí por favor
+    - afirmativo
+    - ok
+    - está bien
+    - bueno
+    - va
+
+- intent: negar
   examples: |
     - no
-    - n
-    - never
-    - I don't think so
-    - don't like that
-    - no way
-    - not really
+    - nah
+    - para nada
+    - no quiero
+    - no gracias
+    - ni ahí
+    - no me interesa
+    - nop
+    - nel
+    - negativo
+    - no por ahora
+    - mejor no
+    - paso
 
-- intent: mood_great
+- intent: chit_chat
   examples: |
-    - perfect
-    - great
-    - amazing
-    - feeling like a king
-    - wonderful
-    - I am feeling very good
-    - I am great
-    - I am amazing
-    - I am going to save the world
-    - super stoked
-    - extremely good
-    - so so perfect
-    - so good
-    - so perfect
-
-- intent: mood_unhappy
-  examples: |
-    - my day was horrible
-    - I am sad
-    - I don't feel very well
-    - I am disappointed
-    - super sad
-    - I'm so sad
-    - sad
-    - very sad
-    - unhappy
-    - not good
-    - not very good
-    - extremly sad
-    - so saad
-    - so sad
+    - qué clima hace hoy
+    - contame un chiste
+    - cuánto es 2 más 2
+    - quién es el presidente
+    - qué hora es
+    - cómo está el dólar
+    - contame algo interesante
+    - sabés cocinar
+    - qué opinás de la política
+    - recomendame una película
+    - qué música te gusta
+    - cuál es tu comida favorita
+    - jugás al fútbol
+    - de qué equipo sos
+    - cómo se hace una torta
+    - qué es la inteligencia artificial
+    - cuántos años tenés
+    - dónde vivís
+    - tenés sentimientos
+    - cuál es el sentido de la vida
+    - hablame del clima
+    - qué día es hoy
+    - cuántos cigarrillos fuma [pikachu](nombre_pokemon) por día
+    - qué desayuna [charizard](nombre_pokemon)
+    - [bulbasaur](nombre_pokemon) tiene novia
+    - de qué color son los calzones de [mewtwo](nombre_pokemon)
+    - a qué hora se despierta [eevee](nombre_pokemon)
+    - [gengar](nombre_pokemon) paga impuestos
+    - cuánto gana [lucario](nombre_pokemon) por mes
+    - [snorlax](nombre_pokemon) va al gimnasio
+    - dónde vive [pikachu](nombre_pokemon)
+    - qué auto tiene [charizard](nombre_pokemon)
+    - [squirtle](nombre_pokemon) se baña
+    - qué celular usa [dragonite](nombre_pokemon)
 
 - intent: bot_challenge
   examples: |
-    - are you a bot?
-    - are you a human?
-    - am I talking to a bot?
-    - am I talking to a human?
+    - sos un bot
+    - sos un robot
+    - sos humano
+    - estoy hablando con un bot
+    - sos una persona real
+    - sos una máquina
+    - estoy hablando con una persona
+    - sos real
+    - sos de verdad
+    - quién sos
+
+- intent: agradecer
+  examples: |
+    - gracias
+    - te agradezco
+    - muchas gracias
+    - genial gracias
+    - gracias por la info
+    - gracias por la información
+    - mil gracias
+    - groso gracias
+    - excelente gracias
+    - te re agradezco
+    - buenísimo gracias
+
+- intent: insultar
+  examples: |
+    - putita de mierda
+    - sos una basura
+    - pedazo de inútil
+    - andate a la mierda
+    - que mierda de bot
+    - sos un pelotudo
+    - la concha de tu madre
+    - imbécil
+    - idiota
+    - pelotudo
+    - boludo de mierda
+    - sos una porquería
+    - que asco das
+    - basura
+    - tarado
+    - mogólico
+    - estúpido
+    - retrasado
+    - inservible
+    - que pedazo de mierda
+    - hijo de puta
+    - la puta que te parió
+    - sos un inútil
+    - no servís para nada
+    - que cagada de bot
+    - chupame un huevo
+    - andate al carajo
+    - pedazo de pelotudo
+    - la re puta madre
+    - que basura sos
+    - sos un desastre
+    - metete el bot en el orto
+    - que porquería de chatbot
+    - sos un descerebrado
+    - cerebro de mosquito
+    - que pedazo de pícara que sos
+    - picara de mierda
+    - chatbot de cuarta

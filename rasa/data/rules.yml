@@ -2,12 +2,42 @@ version: "3.1"
 
 rules:
 
-- rule: Say goodbye anytime the user says goodbye
+- rule: Despedir siempre
   steps:
-  - intent: goodbye
-  - action: utter_goodbye
+  - intent: despedir
+  - action: utter_despedir
 
-- rule: Say 'I am a bot' anytime the user challenges
+- rule: Responder si es bot
   steps:
   - intent: bot_challenge
-  - action: utter_iamabot
+  - action: utter_soy_bot
+
+- rule: Manejar chit-chat con advertencia
+  steps:
+  - intent: chit_chat
+  - action: action_manejar_conducta
+
+- rule: Manejar insulto
+  steps:
+  - intent: insultar
+  - action: action_manejar_conducta
+
+- rule: Agradecer
+  steps:
+  - intent: agradecer
+  - action: utter_agradecer
+
+- rule: Fallback por no-input o mensaje no reconocido
+  steps:
+  - intent: nlu_fallback
+  - action: utter_no_entiendo
+
+- rule: Consultar otro pokemon con contexto
+  steps:
+  - intent: consultar_otro_pokemon
+  - action: action_consultar_otro_pokemon
+
+- rule: Consultar generacion
+  steps:
+  - intent: consultar_generacion
+  - action: action_consultar_generacion

@@ -2,29 +2,302 @@ version: "3.1"
 
 stories:
 
-- story: happy path
+- story: consulta pokemon directa
   steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_great
-  - action: utter_happy
+  - intent: saludar
+  - action: utter_saludar
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
 
-- story: sad path 1
+- story: consulta tipo pokemon
   steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: affirm
-  - action: utter_happy
+  - intent: saludar
+  - action: utter_saludar
+  - intent: consultar_tipo
+  - action: action_consultar_tipo
 
-- story: sad path 2
+- story: consulta habilidades pokemon
   steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: deny
-  - action: utter_goodbye
+  - intent: saludar
+  - action: utter_saludar
+  - intent: consultar_habilidad
+  - action: action_consultar_habilidad
+
+- story: consulta pokemon y luego habilidades
+  steps:
+  - intent: saludar
+  - action: utter_saludar
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+  - intent: consultar_habilidad
+  - action: action_consultar_habilidad
+
+- story: consulta pokemon y despedida
+  steps:
+  - intent: saludar
+  - action: utter_saludar
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+  - intent: agradecer
+  - action: utter_agradecer
+  - intent: despedir
+  - action: utter_despedir
+
+- story: consulta tipo y despedida
+  steps:
+  - intent: saludar
+  - action: utter_saludar
+  - intent: consultar_tipo
+  - action: action_consultar_tipo
+  - intent: despedir
+  - action: utter_despedir
+
+- story: chit chat con advertencia y redireccion
+  steps:
+  - intent: saludar
+  - action: utter_saludar
+  - intent: chit_chat
+  - action: action_manejar_conducta
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+
+- story: consulta directa sin saludo
+  steps:
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+
+- story: consulta tipo directa sin saludo
+  steps:
+  - intent: consultar_tipo
+  - action: action_consultar_tipo
+
+- story: consulta habilidad directa sin saludo
+  steps:
+  - intent: consultar_habilidad
+  - action: action_consultar_habilidad
+
+- story: multiples consultas
+  steps:
+  - intent: saludar
+  - action: utter_saludar
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+  - intent: consultar_tipo
+  - action: action_consultar_tipo
+  - intent: consultar_habilidad
+  - action: action_consultar_habilidad
+  - intent: despedir
+  - action: utter_despedir
+
+- story: afirmar y consultar
+  steps:
+  - intent: saludar
+  - action: utter_saludar
+  - intent: afirmar
+  - action: utter_preguntar_pokemon
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+
+# === Flujos para preguntas específicas ===
+
+- story: consulta pokemon y luego peso
+  steps:
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+  - intent: consultar_peso
+  - action: action_consultar_peso
+
+- story: consulta pokemon y luego altura
+  steps:
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+  - intent: consultar_altura
+  - action: action_consultar_altura
+
+- story: consulta pokemon y luego estadisticas
+  steps:
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+  - intent: consultar_estadistica
+  - action: action_consultar_estadistica
+
+- story: consulta pokemon y luego dato curioso
+  steps:
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+  - intent: consultar_dato_pokemon
+  - action: action_consultar_dato_pokemon
+
+- story: consulta peso directa con nombre
+  steps:
+  - intent: consultar_peso
+  - action: action_consultar_peso
+
+- story: consulta altura directa con nombre
+  steps:
+  - intent: consultar_altura
+  - action: action_consultar_altura
+
+- story: consulta estadistica directa con nombre
+  steps:
+  - intent: consultar_estadistica
+  - action: action_consultar_estadistica
+
+- story: consulta dato pokemon directa con nombre
+  steps:
+  - intent: consultar_dato_pokemon
+  - action: action_consultar_dato_pokemon
+
+- story: saludo consulta pokemon peso altura y despedida
+  steps:
+  - intent: saludar
+  - action: utter_saludar
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+  - intent: consultar_peso
+  - action: action_consultar_peso
+  - intent: consultar_altura
+  - action: action_consultar_altura
+  - intent: agradecer
+  - action: utter_agradecer
+  - intent: despedir
+  - action: utter_despedir
+
+- story: saludo consulta pokemon estadisticas y despedida
+  steps:
+  - intent: saludar
+  - action: utter_saludar
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+  - intent: consultar_estadistica
+  - action: action_consultar_estadistica
+  - intent: despedir
+  - action: utter_despedir
+
+- story: consulta pokemon varias preguntas especificas
+  steps:
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+  - intent: consultar_peso
+  - action: action_consultar_peso
+  - intent: consultar_estadistica
+  - action: action_consultar_estadistica
+  - intent: consultar_habilidad
+  - action: action_consultar_habilidad
+
+- story: chit chat con pokemon absurdo
+  steps:
+  - intent: saludar
+  - action: utter_saludar
+  - intent: chit_chat
+  - action: action_manejar_conducta
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+
+# === Flujos con cambio de Pokémon manteniendo contexto ===
+
+- story: peso de uno y luego de otro
+  steps:
+  - intent: consultar_peso
+  - action: action_consultar_peso
+  - intent: consultar_otro_pokemon
+  - action: action_consultar_otro_pokemon
+
+- story: altura de uno y luego de otro
+  steps:
+  - intent: consultar_altura
+  - action: action_consultar_altura
+  - intent: consultar_otro_pokemon
+  - action: action_consultar_otro_pokemon
+
+- story: stats de uno y luego de otro
+  steps:
+  - intent: consultar_estadistica
+  - action: action_consultar_estadistica
+  - intent: consultar_otro_pokemon
+  - action: action_consultar_otro_pokemon
+
+- story: info de uno y luego de otro
+  steps:
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+  - intent: consultar_otro_pokemon
+  - action: action_consultar_otro_pokemon
+
+- story: habilidad de uno y luego de otro
+  steps:
+  - intent: consultar_habilidad
+  - action: action_consultar_habilidad
+  - intent: consultar_otro_pokemon
+  - action: action_consultar_otro_pokemon
+
+- story: dato de uno y luego de otro
+  steps:
+  - intent: consultar_dato_pokemon
+  - action: action_consultar_dato_pokemon
+  - intent: consultar_otro_pokemon
+  - action: action_consultar_otro_pokemon
+
+- story: peso de uno otro y otro mas
+  steps:
+  - intent: consultar_peso
+  - action: action_consultar_peso
+  - intent: consultar_otro_pokemon
+  - action: action_consultar_otro_pokemon
+  - intent: consultar_otro_pokemon
+  - action: action_consultar_otro_pokemon
+
+- story: pokemon info otro y luego pregunta especifica
+  steps:
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+  - intent: consultar_otro_pokemon
+  - action: action_consultar_otro_pokemon
+  - intent: consultar_peso
+  - action: action_consultar_peso
+
+# === Flujos de generaciones ===
+
+- story: consulta generacion directa
+  steps:
+  - intent: consultar_generacion
+  - action: action_consultar_generacion
+
+- story: saludo y consulta generacion
+  steps:
+  - intent: saludar
+  - action: utter_saludar
+  - intent: consultar_generacion
+  - action: action_consultar_generacion
+
+- story: consulta generacion y luego pokemon
+  steps:
+  - intent: consultar_generacion
+  - action: action_consultar_generacion
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+
+- story: consulta pokemon y luego generacion
+  steps:
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+  - intent: consultar_generacion
+  - action: action_consultar_generacion
+
+- story: saludo generacion pokemon y despedida
+  steps:
+  - intent: saludar
+  - action: utter_saludar
+  - intent: consultar_generacion
+  - action: action_consultar_generacion
+  - intent: consultar_pokemon
+  - action: action_consultar_pokemon
+  - intent: despedir
+  - action: utter_despedir
+
+- story: generacion y luego peso de pokemon
+  steps:
+  - intent: consultar_generacion
+  - action: action_consultar_generacion
+  - intent: consultar_peso
+  - action: action_consultar_peso
