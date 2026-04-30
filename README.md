@@ -10,38 +10,48 @@ Repositorio del chat-bot necesario para realizar el TP 2 de IA
 
 2. Crear un entorno virtual con python 3.10
 
-   ```bash
+   ```powershell
       py -3.10 -m venv venv
    ```
 
 3. Activar el entorno virtual cada vez que se use la terminal
 
-   ```bash
+   ```powershell
       .\venv\Scripts\Activate.ps1
    ```
 
-4. Navegar hasta dentro de la carpeta rasa
+4. Instalar dependencias del proyecto
 
-   ```bash
+   ```powershell
+      pip install -r requirements.txt
+   ```
+
+5. Navegar hasta dentro de la carpeta rasa
+
+   ```powershell
       cd ./rasa
    ```
 
-5. Entrenamos el modelo, esto solo es necesario si se realizaron cambios en el modelo
+6. Entrenamos el modelo. Esto es necesario la primera vez y cada vez que se realicen cambios en el modelo
 
-   ```bash
+   ```powershell
       rasa train
    ```
 
-6. Ejecutamos dos comandos, uno en cada terminal
+7. Ejecutamos dos comandos, uno en cada terminal. En cada terminal nueva, hay que activar el entorno virtual y navegar a la carpeta rasa
 
    Terminal 1
 
-   ```bash
-      ..\venv\Scripts\python.exe -m rasa run actions
+   ```powershell
+      .\venv\Scripts\Activate.ps1
+      cd ./rasa
+      rasa run actions
    ```
 
    Terminal 2
 
-   ```bash
-      ..\venv\Scripts\python.exe -m rasa shell
+   ```powershell
+      .\venv\Scripts\Activate.ps1
+      cd ./rasa
+      rasa shell
    ```
