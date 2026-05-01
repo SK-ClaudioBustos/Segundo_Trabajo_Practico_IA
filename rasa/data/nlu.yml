@@ -1738,3 +1738,43 @@ nlu:
     - zygarde-complete
     - zygarde-mega
 
+- lookup: tipo_pokemon
+  examples: |
+    - normal
+    - fuego
+    - agua
+    - planta
+    - eléctrico
+    - hielo
+    - lucha
+    - veneno
+    - tierra
+    - volador
+    - psíquico
+    - bicho
+    - roca
+    - fantasma
+    - dragón
+    - siniestro
+    - acero
+    - hada
+
+- lookup: numero_generacion
+  examples: |
+    - primera
+    - segunda
+    - tercera
+    - cuarta
+    - quinta
+    - sexta
+    - séptima
+    - octava
+    - novena
+    - décima
+
+- regex: numero_generacion
+  examples: |
+    - \b[1-9]\b
+    - \b10\b
+
+

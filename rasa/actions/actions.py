@@ -47,12 +47,14 @@ GENERACIONES_MAP = {
     "septima": 7, "7": 7, "vii": 7,
     "octava": 8, "8": 8, "viii": 8,
     "novena": 9, "9": 9, "ix": 9,
+    "decima": 10, "10": 10, "x": 10,
 }
 
 GENERACION_NOMBRES = {
     1: "Primera (Kanto)", 2: "Segunda (Johto)", 3: "Tercera (Hoenn)",
     4: "Cuarta (Sinnoh)", 5: "Quinta (Unova/Teselia)", 6: "Sexta (Kalos)",
     7: "Septima (Alola)", 8: "Octava (Galar)", 9: "Novena (Paldea)",
+    10: "Decima (Desconocida)",
 }
 
 POKEAPI_BASE_URL = "https://pokeapi.co/api/v2"
@@ -222,10 +224,17 @@ def _hacer_consulta_dato(dispatcher, nombre_sanitizado):
         if species_resp.status_code == 200:
             sp = species_resp.json()
             descripcion = ""
+            # Primero intentar español
             for entry in sp.get("flavor_text_entries", []):
                 if entry["language"]["name"] == "es":
                     descripcion = entry["flavor_text"].replace("\n", " ").replace("\f", " ")
                     break
+            # Si no hay español, intentar inglés
+            if not descripcion:
+                for entry in sp.get("flavor_text_entries", []):
+                    if entry["language"]["name"] == "en":
+                        descripcion = entry["flavor_text"].replace("\n", " ").replace("\f", " ")
+                        break
             habitat = sp.get("habitat")
             habitat_name = habitat["name"].capitalize() if habitat else "Desconocido"
             color = sp.get("color", {}).get("name", "desconocido").capitalize()
@@ -299,12 +308,12 @@ class ActionConsultarTipo(Action):
             response = requests.get(f"{POKEAPI_BASE_URL}/type/{tipo_ingles}", timeout=10)
             if response.status_code == 200:
                 data = response.json()
-                pokemones = data["pokemon"][:15]
+                pokemones = data["pokemon"][:30]
                 lista = "\n".join(f"  - {p['pokemon']['name'].capitalize()}" for p in pokemones)
                 total = len(data["pokemon"])
-                mensaje = f"Pokemon de tipo {tipo_espanol} ({total} en total, mostrando 15):\n\n{lista}"
-                if total > 15:
-                    mensaje += f"\n\n... y {total - 15} mas. Queres saber mas sobre alguno de estos?"
+                mensaje = f"Pokemon de tipo {tipo_espanol} ({total} en total, mostrando 30):\n\n{lista}"
+                if total > 30:
+                    mensaje += f"\n\n... y {total - 30} mas. Queres saber mas sobre alguno de estos?"
                 dispatcher.utter_message(text=mensaje)
                 return [SlotSet("tipo_pokemon", tipo_sanitizado), SlotSet("ultima_consulta", "tipo")]
             elif response.status_code == 404:
@@ -421,8 +430,8 @@ class ActionConsultarGeneracion(Action):
                     key=lambda x: int(x["url"].rstrip("/").split("/")[-1])
                 )
 
-                # Mostrar maximo 20
-                mostrar = especies_ordenadas[:20]
+                # Mostrar maximo 50
+                mostrar = especies_ordenadas[:50]
                 lista = "\n".join(
                     f"  - {e['name'].capitalize()} (#{e['url'].rstrip('/').split('/')[-1]})"
                     for e in mostrar
@@ -444,8 +453,8 @@ class ActionConsultarGeneracion(Action):
                     f"Pokemon (mostrando {len(mostrar)} de {total}):\n{lista}"
                 )
 
-                if total > 20:
-                    mensaje += f"\n\n... y {total - 20} mas."
+                if total > 50:
+                    mensaje += f"\n\n... y {total - 50} mas."
 
                 mensaje += "\n\nPreguntame sobre cualquiera de estos Pokemon para mas info."
 
