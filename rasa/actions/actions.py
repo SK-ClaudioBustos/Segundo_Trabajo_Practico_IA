@@ -23,10 +23,10 @@ TIPOS_ES_EN = {
 
 TIPOS_EN_ES = {
     "normal": "Normal", "fire": "Fuego", "water": "Agua", "grass": "Planta",
-    "electric": "Electrico", "ice": "Hielo", "fighting": "Lucha",
+    "electric": "Eléctrico", "ice": "Hielo", "fighting": "Lucha",
     "poison": "Veneno", "ground": "Tierra", "flying": "Volador",
-    "psychic": "Psiquico", "bug": "Bicho", "rock": "Roca",
-    "ghost": "Fantasma", "dragon": "Dragon", "dark": "Siniestro",
+    "psychic": "Psíquico", "bug": "Bicho", "rock": "Roca",
+    "ghost": "Fantasma", "dragon": "Dragón", "dark": "Siniestro",
     "steel": "Acero", "fairy": "Hada",
 }
 
@@ -206,6 +206,86 @@ def _hacer_consulta_habilidad(dispatcher, nombre_sanitizado):
     return [SlotSet("nombre_pokemon", nombre_sanitizado), SlotSet("ultima_consulta", "habilidad")]
 
 
+def _hacer_consulta_tipo_pokemon(dispatcher, nombre_sanitizado):
+    data = consultar_pokeapi(nombre_sanitizado)
+    if not data:
+        manejar_error_pokemon(dispatcher, nombre_sanitizado, "no_encontrado")
+        return []
+    pokemon_nombre = data["name"].capitalize()
+    tipos = ", ".join(traducir_tipo_a_espanol(t["type"]["name"]) for t in data["types"])
+    dispatcher.utter_message(text=f"{pokemon_nombre} es de tipo {tipos}.")
+    return [SlotSet("nombre_pokemon", nombre_sanitizado), SlotSet("ultima_consulta", "tipo_pokemon")]
+
+
+def _hacer_consulta_id_pokemon(dispatcher, nombre_sanitizado):
+    data = consultar_pokeapi(nombre_sanitizado)
+    if not data:
+        manejar_error_pokemon(dispatcher, nombre_sanitizado, "no_encontrado")
+        return []
+    pokemon_nombre = data["name"].capitalize()
+    pokemon_id = data["id"]
+    dispatcher.utter_message(text=f"El numero de {pokemon_nombre} en la Pokedex es #{pokemon_id}.")
+    return [SlotSet("nombre_pokemon", nombre_sanitizado), SlotSet("ultima_consulta", "id_pokemon")]
+
+
+def _hacer_consulta_generacion_pokemon(dispatcher, nombre_sanitizado):
+    data = consultar_pokeapi(nombre_sanitizado)
+    if not data:
+        manejar_error_pokemon(dispatcher, nombre_sanitizado, "no_encontrado")
+        return []
+    
+    pokemon_nombre = data["name"].capitalize()
+    generacion = "Desconocida"
+    
+    try:
+        species_resp = requests.get(data["species"]["url"], timeout=10)
+        if species_resp.status_code == 200:
+            sp = species_resp.json()
+            gen_url = sp.get("generation", {}).get("url", "")
+            if gen_url:
+                gen_id = int(gen_url.rstrip("/").split("/")[-1])
+                gen_nombre = GENERACION_NOMBRES.get(gen_id, f"Generacion {gen_id}")
+                generacion = gen_nombre
+    except Exception:
+        pass
+
+    dispatcher.utter_message(text=f"{pokemon_nombre} pertenece a la {generacion}.")
+    return [SlotSet("nombre_pokemon", nombre_sanitizado), SlotSet("ultima_consulta", "generacion_pokemon")]
+
+
+def _hacer_consulta_dato_curioso(dispatcher, nombre_sanitizado):
+    data = consultar_pokeapi(nombre_sanitizado)
+    if not data:
+        manejar_error_pokemon(dispatcher, nombre_sanitizado, "no_encontrado")
+        return []
+    pokemon_nombre = data["name"].capitalize()
+    
+    descripcion = ""
+    try:
+        species_resp = requests.get(data["species"]["url"], timeout=10)
+        if species_resp.status_code == 200:
+            sp = species_resp.json()
+            # Buscar descripción en español
+            for entry in sp.get("flavor_text_entries", []):
+                if entry["language"]["name"] == "es":
+                    descripcion = entry["flavor_text"].replace("\n", " ").replace("\f", " ")
+                    break
+            if not descripcion:
+                for entry in sp.get("flavor_text_entries", []):
+                    if entry["language"]["name"] == "en":
+                        descripcion = entry["flavor_text"].replace("\n", " ").replace("\f", " ")
+                        break
+    except Exception:
+        pass
+
+    if descripcion:
+        dispatcher.utter_message(text=f"Sabias esto sobre {pokemon_nombre}? {descripcion}")
+    else:
+        dispatcher.utter_message(text=f"No tengo datos curiosos especificos sobre {pokemon_nombre} en este momento.")
+    
+    return [SlotSet("nombre_pokemon", nombre_sanitizado), SlotSet("ultima_consulta", "dato_curioso")]
+
+
 def _hacer_consulta_dato(dispatcher, nombre_sanitizado):
     data = consultar_pokeapi(nombre_sanitizado)
     if not data:
@@ -269,6 +349,10 @@ CONSULTAS = {
     "estadistica": _hacer_consulta_estadistica,
     "habilidad": _hacer_consulta_habilidad,
     "dato": _hacer_consulta_dato,
+    "tipo_pokemon": _hacer_consulta_tipo_pokemon,
+    "id_pokemon": _hacer_consulta_id_pokemon,
+    "generacion_pokemon": _hacer_consulta_generacion_pokemon,
+    "dato_curioso": _hacer_consulta_dato_curioso,
 }
 
 
@@ -293,6 +377,12 @@ class ActionConsultarTipo(Action):
         return "action_consultar_tipo"
 
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        # Si hay un nombre de pokemon en el mensaje, es probable que la intencion real 
+        # sea consultar el tipo de ESE pokemon, no ver una lista.
+        nombre_entidad = next(tracker.get_latest_entity_values("nombre_pokemon"), None)
+        if nombre_entidad:
+            return _hacer_consulta_tipo_pokemon(dispatcher, sanitizar_entrada(nombre_entidad))
+
         tipo = next(tracker.get_latest_entity_values("tipo_pokemon"), None)
         if not tipo:
             tipo = tracker.get_slot("tipo_pokemon")
@@ -373,6 +463,54 @@ class ActionConsultarEstadistica(Action):
         return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_estadistica(dispatcher, nombre))
 
 
+class ActionConsultarTipoPokemon(Action):
+    def name(self) -> Text:
+        return "action_consultar_tipo_pokemon"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        nombre = obtener_nombre_pokemon(tracker)
+        if not nombre:
+            manejar_error_pokemon(dispatcher, "", "sin_nombre")
+            return []
+        return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_tipo_pokemon(dispatcher, nombre))
+
+
+class ActionConsultarIdPokemon(Action):
+    def name(self) -> Text:
+        return "action_consultar_id_pokemon"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        nombre = obtener_nombre_pokemon(tracker)
+        if not nombre:
+            manejar_error_pokemon(dispatcher, "", "sin_nombre")
+            return []
+        return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_id_pokemon(dispatcher, nombre))
+
+
+class ActionConsultarGeneracionPokemon(Action):
+    def name(self) -> Text:
+        return "action_consultar_generacion_pokemon"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        nombre = obtener_nombre_pokemon(tracker)
+        if not nombre:
+            manejar_error_pokemon(dispatcher, "", "sin_nombre")
+            return []
+        return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_generacion_pokemon(dispatcher, nombre))
+
+
+class ActionConsultarDatoCurioso(Action):
+    def name(self) -> Text:
+        return "action_consultar_dato_curioso"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        nombre = obtener_nombre_pokemon(tracker)
+        if not nombre:
+            manejar_error_pokemon(dispatcher, "", "sin_nombre")
+            return []
+        return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_dato_curioso(dispatcher, nombre))
+
+
 class ActionConsultarDatoPokemon(Action):
     def name(self) -> Text:
         return "action_consultar_dato_pokemon"
@@ -383,6 +521,39 @@ class ActionConsultarDatoPokemon(Action):
             manejar_error_pokemon(dispatcher, "", "sin_nombre")
             return []
         return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_dato(dispatcher, nombre))
+
+
+class ActionConsultarCantidadGeneracion(Action):
+    def name(self) -> Text:
+        return "action_consultar_cantidad_generacion"
+
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+        gen_texto = next(tracker.get_latest_entity_values("numero_generacion"), None)
+        if not gen_texto:
+            gen_texto = tracker.get_slot("numero_generacion")
+
+        if not gen_texto:
+            dispatcher.utter_message(text="De que generacion queres saber la cantidad?")
+            return []
+
+        gen_limpio = sanitizar_entrada(gen_texto)
+        gen_id = GENERACIONES_MAP.get(gen_limpio)
+
+        if not gen_id:
+            dispatcher.utter_message(text=f"No reconozco la generacion '{gen_texto}'.")
+            return []
+
+        def consulta():
+            response = requests.get(f"{POKEAPI_BASE_URL}/generation/{gen_id}", timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                total = len(data.get("pokemon_species", []))
+                gen_nombre = GENERACION_NOMBRES.get(gen_id, f"Generacion {gen_id}")
+                dispatcher.utter_message(text=f"En la {gen_nombre} se agregaron un total de {total} Pokemon nuevos.")
+                return [SlotSet("numero_generacion", gen_limpio), SlotSet("ultima_consulta", "cantidad_generacion")]
+            return []
+
+        return ejecutar_con_manejo_errores(dispatcher, "", consulta)
 
 
 class ActionConsultarGeneracion(Action):

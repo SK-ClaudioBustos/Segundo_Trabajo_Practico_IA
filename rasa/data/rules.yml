@@ -32,12 +32,37 @@ rules:
   - intent: nlu_fallback
   - action: utter_no_entiendo
 
-- rule: Consultar otro pokemon con contexto
+- rule: Consultar tipo especifico de pokemon
   steps:
-  - intent: consultar_otro_pokemon
-  - action: action_consultar_otro_pokemon
+  - intent: consultar_tipo_pokemon
+  - action: action_consultar_tipo_pokemon
+
+- rule: Consultar ID de pokemon
+  steps:
+  - intent: consultar_id_pokemon
+  - action: action_consultar_id_pokemon
+
+- rule: Consultar generacion de un pokemon especifico
+  steps:
+  - intent: consultar_generacion_pokemon
+  - action: action_consultar_generacion_pokemon
+
+- rule: Consultar dato curioso de pokemon
+  steps:
+  - intent: consultar_dato_curioso
+  - action: action_consultar_dato_curioso
+
+- rule: Consultar cantidad de pokemon por generacion
+  steps:
+  - intent: consultar_cantidad_generacion
+  - action: action_consultar_cantidad_generacion
 
 - rule: Consultar generacion
   steps:
   - intent: consultar_generacion
   - action: action_consultar_generacion
+
+- rule: Consultar otro pokemon con contexto
+  steps:
+  - intent: consultar_otro_pokemon
+  - action: action_consultar_otro_pokemon

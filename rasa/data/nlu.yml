@@ -170,7 +170,7 @@ nlu:
     - cuánto tiene de ataque especial
     - cuánto tiene de defensa especial
 
-- intent: consultar_dato_pokemon
+- intent: consultar_tipo_pokemon
   examples: |
     - de qué tipo es [pikachu](nombre_pokemon)
     - qué tipo es [charizard](nombre_pokemon)
@@ -179,12 +179,31 @@ nlu:
     - qué tipo tiene
     - decime el tipo
     - y el tipo
+    - tipo de [bulbasaur](nombre_pokemon)
+
+- intent: consultar_id_pokemon
+  examples: |
     - cuál es el número de [bulbasaur](nombre_pokemon)
     - qué número es en la pokédex
     - cuál es su número
     - número de pokédex de [mewtwo](nombre_pokemon)
     - decime el id
     - cuál es el id de [eevee](nombre_pokemon)
+    - id de [pikachu](nombre_pokemon)
+
+- intent: consultar_generacion_pokemon
+  examples: |
+    - de qué generación es [pikachu](nombre_pokemon)
+    - a qué generación pertenece [charizard](nombre_pokemon)
+    - de qué gen es [bulbasaur](nombre_pokemon)
+    - cuál es la generación de [mewtwo](nombre_pokemon)
+    - a qué gen pertenece
+    - de qué generación es
+    - qué generación tiene
+    - generación de [eevee](nombre_pokemon)
+
+- intent: consultar_dato_curioso
+  examples: |
     - decime un dato curioso de [pikachu](nombre_pokemon)
     - contame algo interesante de [charizard](nombre_pokemon)
     - algún dato curioso de [gengar](nombre_pokemon)
@@ -193,14 +212,22 @@ nlu:
     - contame algo curioso
     - algún dato interesante
 
-- intent: consultar_generacion
+- intent: consultar_cantidad_generacion
   examples: |
-    - pokémon de la [primera](numero_generacion) generación
-    - cuáles son los pokémon de la generación [1](numero_generacion)
     - cuántos pokémon hay en la [primera](numero_generacion) generación
     - cuántos pokémon agregaron en la [tercera](numero_generacion) generación
     - cuántos pokémon nuevos hay en la [tercera](numero_generacion) generación
     - cuántos pokémon tiene la generación [3](numero_generacion)
+    - decime la cantidad de pokémon de la gen [1](numero_generacion)
+    - qué cantidad de pokémon hay en la [segunda](numero_generacion) gen
+    - cuántos pokémon hay en la gen [6](numero_generacion)
+    - cuántos pokémon se agregaron en la generación [8](numero_generacion)
+
+
+- intent: consultar_generacion
+  examples: |
+    - pokémon de la [primera](numero_generacion) generación
+    - cuáles son los pokémon de la generación [1](numero_generacion)
     - mostrá los pokémon de la generación [2](numero_generacion)
     - pokémon de la generación [segunda](numero_generacion)
     - qué pokémon salieron en la [cuarta](numero_generacion) generación
@@ -212,10 +239,8 @@ nlu:
     - cuáles son de la [séptima](numero_generacion) generación
     - pokémon de generación [octava](numero_generacion)
     - qué pokémon nuevos tiene la gen [4](numero_generacion)
-    - cuántos pokémon hay en la gen [6](numero_generacion)
     - listá pokémon de la generación [novena](numero_generacion)
     - pokémon nuevos de la generación [7](numero_generacion)
-    - cuántos pokémon se agregaron en la generación [8](numero_generacion)
     - decime los pokémon de la generación [9](numero_generacion)
     - pokémon de la [segunda](numero_generacion) gen
     - cuáles pokémon son de generación [tercera](numero_generacion)
