@@ -341,6 +341,12 @@ nlu:
     - qué auto tiene [charizard](nombre_pokemon)
     - [squirtle](nombre_pokemon) se baña
     - qué celular usa [dragonite](nombre_pokemon)
+    - nahuel se la come
+    - silvia es una loca
+    - qué hacés bot
+    - contame de tu vida
+    - qué onda nahuel
+    - silvia loca de remate
 
 - intent: bot_challenge
   examples: |
@@ -409,6 +415,14 @@ nlu:
     - que pedazo de pícara que sos
     - picara de mierda
     - chatbot de cuarta
+    - claudio puto
+    - puto
+    - trolo
+    - silvia loca
+    - loca de remate
+    - gila
+    - forro
+    - pedazo de mieda
 
 - lookup: nombre_pokemon
   examples: |

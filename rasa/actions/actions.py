@@ -1,10 +1,13 @@
 import re
+import os
+import yaml
+from thefuzz import process, fuzz
 from typing import Any, Text, Dict, List
 
 import requests
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
-from rasa_sdk.events import SlotSet, ConversationPaused
+from rasa_sdk.events import SlotSet, ConversationPaused, FollowupAction
 
 
 # =============================================================================
@@ -59,6 +62,83 @@ GENERACION_NOMBRES = {
 
 POKEAPI_BASE_URL = "https://pokeapi.co/api/v2"
 
+# Cache para nombres de pokemon
+POKEMON_NAMES_CACHE = []
+
+
+def cargar_nombres_pokemon():
+    """Carga los nombres de pokemon desde la lookup table en nlu.yml."""
+    global POKEMON_NAMES_CACHE
+    if POKEMON_NAMES_CACHE:
+        return POKEMON_NAMES_CACHE
+
+    # Construir ruta relativa a data/nlu.yml
+    path_actual = os.path.dirname(__file__)
+    nlu_path = os.path.abspath(os.path.join(path_actual, "..", "data", "nlu.yml"))
+
+    try:
+        with open(nlu_path, 'r', encoding='utf-8') as f:
+            data = yaml.safe_load(f)
+            for item in data.get('nlu', []):
+                if 'lookup' in item and item['lookup'] == 'nombre_pokemon':
+                    examples = item.get('examples', "").split('\n')
+                    # Limpiar y filtrar nombres
+                    POKEMON_NAMES_CACHE = [
+                        e.strip('- ').lower()
+                        for e in examples
+                        if e.strip('- ')
+                    ]
+                    break
+    except Exception as e:
+        print(f"Error al cargar nombres de pokemon: {e}")
+
+    return POKEMON_NAMES_CACHE
+
+
+def corregir_nombre_pokemon(nombre_usuario: str) -> str:
+    """Busca el nombre de pokemon mas parecido usando fuzzy matching."""
+    if not nombre_usuario:
+        return ""
+
+    nombres_validos = cargar_nombres_pokemon()
+    if not nombres_validos:
+        return nombre_usuario
+
+    nombre_query = nombre_usuario.lower().strip()
+
+    # 1. Intento match exacto (despues de sanitizar)
+    if nombre_query in nombres_validos:
+        return nombre_query
+
+    # 2. Fuzzy matching
+    # Usamos QRatio que es mejor para comparar palabras sueltas
+    best_match, score = process.extractOne(nombre_query, nombres_validos, scorer=fuzz.QRatio)
+
+    # Si la confianza es aceptable (>= 75), asumimos que es ese pokemon
+    if score >= 75:
+        return best_match
+
+    # Si no estamos seguros, devolvemos el original
+    return nombre_query
+
+
+def sugerir_nombre_pokemon(nombre_usuario: str) -> str:
+    """Busca una sugerencia si el match no fue lo suficientemente fuerte para auto-corregir."""
+    if not nombre_usuario:
+        return ""
+
+    nombres_validos = cargar_nombres_pokemon()
+    if not nombres_validos:
+        return ""
+
+    best_match, score = process.extractOne(nombre_usuario, nombres_validos, scorer=fuzz.QRatio)
+
+    # Si tiene una confianza decente (>= 60) pero no fue auto-corregido (< 75)
+    if 60 <= score < 75:
+        return best_match
+
+    return ""
+
 
 def sanitizar_entrada(texto: str) -> str:
     """Sanitiza la entrada del usuario."""
@@ -84,7 +164,12 @@ def obtener_nombre_pokemon(tracker: Tracker) -> str:
         nombre = tracker.get_slot("nombre_pokemon")
     if not nombre:
         return ""
-    return sanitizar_entrada(nombre)
+
+    # Aplicamos sanitizacion basica y luego correccion fuzzy
+    nombre_sanitizado = sanitizar_entrada(nombre)
+    nombre_corregido = corregir_nombre_pokemon(nombre_sanitizado)
+
+    return nombre_corregido
 
 
 def consultar_pokeapi(nombre: str) -> dict:
@@ -95,6 +180,14 @@ def consultar_pokeapi(nombre: str) -> dict:
 
 
 def manejar_error_pokemon(dispatcher, nombre, error_tipo="no_encontrado"):
+    if error_tipo == "no_encontrado":
+        sugerencia = sugerir_nombre_pokemon(nombre)
+        if sugerencia:
+            dispatcher.utter_message(
+                text=f"No encontre ningun Pokemon llamado '{nombre}'. ¿Quisiste decir '{sugerencia.capitalize()}'?"
+            )
+            return
+
     mensajes = {
         "no_encontrado": f"No encontre ningun Pokemon llamado '{nombre}'. Asegurate de escribir bien el nombre.",
         "sin_nombre": "No mencionaste ningun Pokemon y no tengo uno en memoria. Primero consulta un Pokemon, por ejemplo: 'Contame sobre Pikachu'",
@@ -367,8 +460,7 @@ class ActionConsultarPokemon(Action):
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         nombre = obtener_nombre_pokemon(tracker)
         if not nombre:
-            dispatcher.utter_message(text="No mencionaste ningun Pokemon. Decime el nombre del Pokemon que queres consultar.")
-            return []
+            return [FollowupAction("action_manejar_conducta")]
         return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_pokemon(dispatcher, nombre))
 
 
@@ -412,7 +504,7 @@ class ActionConsultarTipo(Action):
                 manejar_error_pokemon(dispatcher, tipo, "api_error")
             return []
 
-        return ejecutar_con_manejo_errores(dispatcher, tipo, consulta)
+        return [FollowupAction("action_manejar_conducta")]
 
 
 class ActionConsultarHabilidad(Action):
@@ -422,8 +514,7 @@ class ActionConsultarHabilidad(Action):
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         nombre = obtener_nombre_pokemon(tracker)
         if not nombre:
-            dispatcher.utter_message(text="No mencionaste ningun Pokemon. Decime el nombre del Pokemon del que queres saber sus habilidades.")
-            return []
+            return [FollowupAction("action_manejar_conducta")]
         return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_habilidad(dispatcher, nombre))
 
 
@@ -434,8 +525,7 @@ class ActionConsultarPeso(Action):
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         nombre = obtener_nombre_pokemon(tracker)
         if not nombre:
-            manejar_error_pokemon(dispatcher, "", "sin_nombre")
-            return []
+            return [FollowupAction("action_manejar_conducta")]
         return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_peso(dispatcher, nombre))
 
 
@@ -446,8 +536,7 @@ class ActionConsultarAltura(Action):
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         nombre = obtener_nombre_pokemon(tracker)
         if not nombre:
-            manejar_error_pokemon(dispatcher, "", "sin_nombre")
-            return []
+            return [FollowupAction("action_manejar_conducta")]
         return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_altura(dispatcher, nombre))
 
 
@@ -458,8 +547,7 @@ class ActionConsultarEstadistica(Action):
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         nombre = obtener_nombre_pokemon(tracker)
         if not nombre:
-            manejar_error_pokemon(dispatcher, "", "sin_nombre")
-            return []
+            return [FollowupAction("action_manejar_conducta")]
         return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_estadistica(dispatcher, nombre))
 
 
@@ -470,8 +558,7 @@ class ActionConsultarTipoPokemon(Action):
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         nombre = obtener_nombre_pokemon(tracker)
         if not nombre:
-            manejar_error_pokemon(dispatcher, "", "sin_nombre")
-            return []
+            return [FollowupAction("action_manejar_conducta")]
         return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_tipo_pokemon(dispatcher, nombre))
 
 
@@ -482,8 +569,7 @@ class ActionConsultarIdPokemon(Action):
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         nombre = obtener_nombre_pokemon(tracker)
         if not nombre:
-            manejar_error_pokemon(dispatcher, "", "sin_nombre")
-            return []
+            return [FollowupAction("action_manejar_conducta")]
         return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_id_pokemon(dispatcher, nombre))
 
 
@@ -494,8 +580,7 @@ class ActionConsultarGeneracionPokemon(Action):
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         nombre = obtener_nombre_pokemon(tracker)
         if not nombre:
-            manejar_error_pokemon(dispatcher, "", "sin_nombre")
-            return []
+            return [FollowupAction("action_manejar_conducta")]
         return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_generacion_pokemon(dispatcher, nombre))
 
 
@@ -506,8 +591,7 @@ class ActionConsultarDatoCurioso(Action):
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         nombre = obtener_nombre_pokemon(tracker)
         if not nombre:
-            manejar_error_pokemon(dispatcher, "", "sin_nombre")
-            return []
+            return [FollowupAction("action_manejar_conducta")]
         return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_dato_curioso(dispatcher, nombre))
 
 
@@ -518,8 +602,7 @@ class ActionConsultarDatoPokemon(Action):
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         nombre = obtener_nombre_pokemon(tracker)
         if not nombre:
-            manejar_error_pokemon(dispatcher, "", "sin_nombre")
-            return []
+            return [FollowupAction("action_manejar_conducta")]
         return ejecutar_con_manejo_errores(dispatcher, nombre, lambda: _hacer_consulta_dato(dispatcher, nombre))
 
 
@@ -533,8 +616,7 @@ class ActionConsultarCantidadGeneracion(Action):
             gen_texto = tracker.get_slot("numero_generacion")
 
         if not gen_texto:
-            dispatcher.utter_message(text="De que generacion queres saber la cantidad?")
-            return []
+            return [FollowupAction("action_manejar_conducta")]
 
         gen_limpio = sanitizar_entrada(gen_texto)
         gen_id = GENERACIONES_MAP.get(gen_limpio)
@@ -656,8 +738,7 @@ class ActionConsultarOtroPokemon(Action):
     def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         nombre = next(tracker.get_latest_entity_values("nombre_pokemon"), None)
         if not nombre:
-            dispatcher.utter_message(text="No mencionaste un Pokemon. Decime el nombre, por ejemplo: 'y Pikachu?'")
-            return []
+            return [FollowupAction("action_manejar_conducta")]
 
         nombre_sanitizado = sanitizar_entrada(nombre)
         if not nombre_sanitizado:
@@ -691,45 +772,41 @@ class ActionManejarConducta(Action):
         intent = tracker.latest_message.get("intent", {}).get("name", "")
         advertencias_actual = tracker.get_slot("advertencias") or 0
 
-        # Insultos suman 2 strikes, chit_chat suma 1
-        if intent == "insultar":
-            advertencias_actual += 2
-        else:
-            advertencias_actual += 1
+        # Cada falta resta 1 vida (suma 1 al contador de advertencias)
+        advertencias_actual += 1
+        vidas_restantes = int(3 - advertencias_actual)
 
         if advertencias_actual >= 3:
             # Expulsar: pausar la conversacion
             dispatcher.utter_message(
                 text="[SESION FINALIZADA]\n\n"
-                     "Has sido expulsado por uso inapropiado del chat. "
+                     "Has perdido todas tus vidas por uso inapropiado del chat. "
                      "Este asistente es exclusivamente para consultas sobre Pokemon.\n\n"
                      "La sesion ha sido cerrada. No recibiras mas respuestas."
             )
             return [SlotSet("advertencias", advertencias_actual), ConversationPaused()]
 
-        elif advertencias_actual == 2:
-            dispatcher.utter_message(
-                text="[ULTIMA ADVERTENCIA]\n\n"
-                     "Este es tu ultimo aviso. La proxima vez que envies un mensaje "
-                     "fuera de tema o irrespetuoso, la conversacion sera finalizada permanentemente.\n\n"
-                     f"Advertencias: {int(advertencias_actual)}/3\n\n"
-                     "Si queres seguir usando el bot, pregunta sobre Pokemon."
-            )
-        elif intent == "insultar":
-            dispatcher.utter_message(
-                text="[ULTIMA ADVERTENCIA]\n\n"
-                     "Los insultos no son tolerados. Una mas y la conversacion se cierra.\n\n"
-                     f"Advertencias: {int(advertencias_actual)}/3\n\n"
-                     "Si queres seguir, hace preguntas sobre Pokemon."
-            )
+        # Definir mensaje segun el intent
+        nombre_detectado = obtener_nombre_pokemon(tracker)
+        
+        if intent == "insultar":
+            motivo = "Los insultos no son tolerados."
+        elif intent == "bot_challenge":
+            motivo = "Soy un bot Pokemon y solo respondo dudas sobre el juego."
+        elif intent == "chit_chat":
+            motivo = "Ese mensaje no tiene que ver con Pokemon."
+        elif not nombre_detectado and intent != "saludar" and intent != "despedir" and intent != "agradecer":
+            motivo = "No mencionaste ningun Pokemon o informacion necesaria en tu mensaje."
         else:
-            dispatcher.utter_message(
-                text="[ADVERTENCIA]\n\n"
-                     "Ese mensaje no tiene que ver con Pokemon. "
-                     "Este chat es exclusivamente para consultas sobre Pokemon.\n\n"
-                     f"Advertencias: {int(advertencias_actual)}/3\n\n"
-                     "Si acumulas 3 advertencias, la conversacion sera finalizada. "
-                     "Preguntame sobre Pokemon, por ejemplo: 'Contame sobre Pikachu'"
-            )
+            motivo = "No entiendo tu mensaje o esta fuera de tema."
 
+        mensaje = (
+            f"[ADVERTENCIA]\n\n"
+            f"{motivo} Este chat es exclusivamente para consultas sobre Pokemon.\n\n"
+            f"Vidas restantes: {vidas_restantes}/3\n\n"
+            "Si llegas a 0 vidas, la conversacion sera finalizada permanentemente. "
+            "Preguntame sobre Pokemon, por ejemplo: 'Contame sobre Pikachu'"
+        )
+
+        dispatcher.utter_message(text=mensaje)
         return [SlotSet("advertencias", advertencias_actual)]

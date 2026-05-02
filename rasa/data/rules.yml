@@ -7,10 +7,10 @@ rules:
   - intent: despedir
   - action: utter_despedir
 
-- rule: Responder si es bot
+- rule: Responder si es bot (fuera de tema)
   steps:
   - intent: bot_challenge
-  - action: utter_soy_bot
+  - action: action_manejar_conducta
 
 - rule: Manejar chit-chat con advertencia
   steps:
@@ -27,10 +27,10 @@ rules:
   - intent: agradecer
   - action: utter_agradecer
 
-- rule: Fallback por no-input o mensaje no reconocido
+- rule: Fallback por mensaje no reconocido (fuera de tema)
   steps:
   - intent: nlu_fallback
-  - action: utter_no_entiendo
+  - action: action_manejar_conducta
 
 - rule: Consultar tipo especifico de pokemon
   steps:

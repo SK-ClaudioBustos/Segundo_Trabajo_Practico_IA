@@ -1,3 +1,5 @@
 rasa
 rasa-sdk
 requests
+thefuzz
+python-Levenshtein
