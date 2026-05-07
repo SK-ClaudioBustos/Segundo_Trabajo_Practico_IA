@@ -2,6 +2,28 @@ version: "3.1"
 
 rules:
 
+# - rule: Forzar saludo al inicio
+#   conversation_start: true
+#   steps:
+#   - action: action_session_start
+  
+# - rule: Saludo inicial
+#   steps:
+#   - intent: saludar  
+#   - action: utter_saludar
+
+- rule: Saludo inicial
+  conversation_start: true
+  steps:
+  - intent: saludar
+  - action: utter_bienvenida
+
+- rule: Saludos siguientes
+  conversation_start: false
+  steps:
+  - intent: saludar
+  - action: utter_saludar
+
 - rule: Despedir siempre
   steps:
   - intent: despedir

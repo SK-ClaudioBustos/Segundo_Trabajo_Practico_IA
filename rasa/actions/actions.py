@@ -4,7 +4,7 @@ from typing import Any, Text, Dict, List
 import requests
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
-from rasa_sdk.events import SlotSet, ConversationPaused
+from rasa_sdk.events import SlotSet, ConversationPaused,  SessionStarted, ActionExecuted
 
 
 # =============================================================================
@@ -553,3 +553,17 @@ class ActionManejarConducta(Action):
             )
 
         return [SlotSet("advertencias", advertencias_actual)]
+    
+# class ActionSessionStart(Action):
+#     def name(self) -> Text:
+#         return "action_session_start"
+
+#     async def run(
+#       self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]
+#     ) -> List[Dict[Text, Any]]:
+        
+#         # Envía el mensaje de bienvenida
+#         dispatcher.utter_message(text="¡Bienvenido! Soy tu asistente Pokémon. Puedo darte info sobre cualquier Pokémon, tipos o generaciones. ¿En qué puedo ayudarte hoy?")
+        
+#         # Indica a Rasa que la sesión inició y que quede escuchando (action_listen)
+#         return [SessionStarted(), ActionExecuted("action_listen")]

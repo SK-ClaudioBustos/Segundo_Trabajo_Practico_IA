@@ -60,15 +60,20 @@ slots:
       - type: custom
 
 responses:
+
+  utter_bienvenida:
+    - text: "¡Bienvenido! Soy tu asistente Pokémon. Puedo darte info sobre cualquier Pokémon, tipos o generaciones. ¿En qué puedo ayudarte hoy?"
+    
   utter_saludar:
-    - text: "Hola! Soy tu asistente Pokemon. Sobre que Pokemon queres saber?"
+    - text: "¡Hola! Soy tu asistente Pokémon. Puedo darte info sobre cualquier Pokémon, tipos o generaciones. ¿En qué puedo ayudarte hoy?"
+    - text: "Hola! Soy tu asistente Pokemon. Sobre que Pokemon querés saber?"
     - text: "Buenas! Soy un bot Pokemon. Preguntame lo que quieras sobre cualquier Pokemon."
-    - text: "Hola, entrenador! En que Pokemon estas interesado?"
+    - text: "Hola, entrenador! En que Pokemon estás interesado?"
 
   utter_despedir:
     - text: "Hasta luego, entrenador!"
     - text: "Nos vemos! Que atrapes muchos Pokemon."
-    - text: "Chau! Volve cuando quieras saber mas sobre Pokemon."
+    - text: "Chau! Volvé cuando quieras saber más sobre Pokemon."
 
   utter_soy_bot:
     - text: "Soy un bot Pokemon creado con Rasa. Preguntame sobre cualquier Pokemon!"
@@ -94,6 +99,7 @@ responses:
     - text: "No estoy seguro de que me estas pidiendo. Queres consultar sobre algun Pokemon?"
 
 actions:
+  # - action_session_start
   - action_consultar_pokemon
   - action_consultar_tipo
   - action_consultar_habilidad

@@ -18,6 +18,7 @@ nlu:
     - hola bot
     - buenas buenas
     - holaa
+    - holis
 
 - intent: despedir
   examples: |
