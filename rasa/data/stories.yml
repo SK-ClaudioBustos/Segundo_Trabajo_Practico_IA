@@ -125,8 +125,8 @@ stories:
   steps:
   - intent: consultar_pokemon
   - action: action_consultar_pokemon
-  - intent: consultar_dato_pokemon
-  - action: action_consultar_dato_pokemon
+  - intent: consultar_dato_curioso
+  - action: action_consultar_dato_curioso
 
 - story: consulta peso directa con nombre
   steps:
@@ -143,10 +143,10 @@ stories:
   - intent: consultar_estadistica
   - action: action_consultar_estadistica
 
-- story: consulta dato pokemon directa con nombre
+- story: consulta dato curioso directa con nombre
   steps:
-  - intent: consultar_dato_pokemon
-  - action: action_consultar_dato_pokemon
+  - intent: consultar_dato_curioso
+  - action: action_consultar_dato_curioso
 
 - story: saludo consulta pokemon peso altura y despedida
   steps:
@@ -231,10 +231,10 @@ stories:
   - intent: consultar_otro_pokemon
   - action: action_consultar_otro_pokemon
 
-- story: dato de uno y luego de otro
+- story: dato curioso de uno y luego de otro
   steps:
-  - intent: consultar_dato_pokemon
-  - action: action_consultar_dato_pokemon
+  - intent: consultar_dato_curioso
+  - action: action_consultar_dato_curioso
   - intent: consultar_otro_pokemon
   - action: action_consultar_otro_pokemon
 

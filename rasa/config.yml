@@ -21,6 +21,9 @@ pipeline:
   - name: DIETClassifier
     epochs: 100
   - name: EntitySynonymMapper
+  - name: RegexEntityExtractor
+    use_lookup_tables: true
+    use_regexes: true
   - name: ResponseSelector
     epochs: 100
   - name: FallbackClassifier

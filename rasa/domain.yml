@@ -9,7 +9,11 @@ intents:
   - consultar_peso
   - consultar_altura
   - consultar_estadistica
-  - consultar_dato_pokemon
+  - consultar_tipo_pokemon
+  - consultar_id_pokemon
+  - consultar_generacion_pokemon
+  - consultar_dato_curioso
+  - consultar_cantidad_generacion
   - consultar_generacion
   - consultar_otro_pokemon
   - afirmar
@@ -106,7 +110,11 @@ actions:
   - action_consultar_peso
   - action_consultar_altura
   - action_consultar_estadistica
-  - action_consultar_dato_pokemon
+  - action_consultar_tipo_pokemon
+  - action_consultar_id_pokemon
+  - action_consultar_generacion_pokemon
+  - action_consultar_dato_curioso
+  - action_consultar_cantidad_generacion
   - action_consultar_generacion
   - action_consultar_otro_pokemon
   - action_manejar_conducta
